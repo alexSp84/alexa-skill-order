@@ -1,0 +1,213 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "pizza search",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": [
+                        "help"
+                    ]
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "orderDialog",
+                    "slots": [
+                        {
+                            "name": "foodType",
+                            "type": "pizza",
+                            "samples": [
+                                "I want to order a pizza {foodType}"
+                            ]
+                        },
+                        {
+                            "name": "shippingType",
+                            "type": "shipping",
+                            "samples": [
+                                "I want to {shippingType}",
+                                "{shippingType}"
+                            ]
+                        },
+                        {
+                            "name": "restaurantList",
+                            "type": "restaurant",
+                            "samples": [
+                                "I select {restaurantList}",
+                                "{restaurantList}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "I want to order a pizza {foodType}",
+                        "pizza {foodType}",
+                        "I want to {shippingType}",
+                        "{shippingType}",
+                        "I select {restaurantList}",
+                        "{restaurantList}"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "pizza",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "boscaiola"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "capricciosa"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "margherita"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "shipping",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "delivery"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "go there"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "restaurant",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "Madame pizza"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Miss pizza"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "orderDialog",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "foodType",
+                            "type": "pizza",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1162780729786.1432530920282"
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.570385214773.1394429166859.1161009388596"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "shippingType",
+                            "type": "shipping",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1047728444416.1554005117700"
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.843796751958.121061225482.1461634208902"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "restaurantList",
+                            "type": "restaurant",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1042996074955.1235172404897"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "SKILL_RESPONSE"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.1162780729786.1432530920282",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What do you want to order?"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.570385214773.1394429166859.1161009388596",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "pizza"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.843796751958.121061225482.1461634208902",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "shipping"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1047728444416.1554005117700",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Do you want go there or delivery?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1042996074955.1235172404897",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Select the restaurant"
+                    }
+                ]
+            }
+        ]
+    }
+}
