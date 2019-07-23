@@ -1,6 +1,3 @@
-/* eslint-disable  func-names */
-/* eslint-disable  no-console */
-
 const Alexa = require('ask-sdk');
 
 const StartMessage = {
@@ -10,51 +7,52 @@ const StartMessage = {
   },
   handle(handlerInput) {
     return handlerInput.responseBuilder
-      .addDelegateDirective('orderDialog')
-      .getResponse();
+        .addDelegateDirective('orderDialog')
+        .getResponse();
   },
 };
 
 const StartOrder = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
-    return request.type === 'IntentRequest' && 
-    request.intent.name === 'orderDialog' && 
-    handlerInput.requestEnvelope.request.dialogState !== 'COMPLETED' &&
-    request.intent.slots.foodType.value && 
-    !request.intent.slots.shippingType.value
+    return request.type === 'IntentRequest' &&
+        request.intent.name === 'orderDialog' &&
+        handlerInput.requestEnvelope.request.dialogState !== 'COMPLETED' &&
+        request.intent.slots.foodType.value;
   },
   handle(handlerInput) {
     return handlerInput.responseBuilder
-      .speak('Nearby to you there 10 places.')
-      .addDelegateDirective()
-      .getResponse();
+        .addDelegateDirective()
+        .getResponse();
   },
 };
 
 const ShippingMethod = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
-    return request.type === 'IntentRequest' && 
-    request.intent.name === 'orderDialog' &&
-    handlerInput.requestEnvelope.request.dialogState !== 'COMPLETED' &&
-    request.intent.slots.shippingType.value && 
-    !request.intent.slots.restaurantList.value;
+    return request.type === 'IntentRequest' &&
+        request.intent.name === 'orderDialog' &&
+        handlerInput.requestEnvelope.request.dialogState === 'IN_PROGRESS' &&
+        request.intent.slots.shippingType.value &&
+        (request.intent.slots.shippingType.value === 'delivery' || request.intent.slots.shippingType.value === 'go there') &&
+        !request.intent.slots.restaurantList.value;
   },
   handle(handlerInput) {
     return handlerInput.responseBuilder
-      .addDelegateDirective()
-      .getResponse();
+        .addDelegateDirective()
+        .getResponse();
   },
 };
 
 const SelectRestaurant = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
-    return request.type === 'IntentRequest' && 
-    request.intent.name === 'orderDialog' &&
-    handlerInput.requestEnvelope.request.dialogState !== 'COMPLETED' &&
-    request.intent.slots.restaurantList.value;
+    return request.type === 'IntentRequest' &&
+        request.intent.name === 'orderDialog' &&
+        handlerInput.requestEnvelope.request.dialogState === 'IN_PROGRESS' &&
+        request.intent.slots.restaurantList.value &&
+        request.intent.slots.restaurantList.resolutions.resolutionsPerAuthority[0].status.code &&
+        request.intent.slots.restaurantList.resolutions.resolutionsPerAuthority[0].status.code === 'ER_SUCCESS_MATCH';
   },
   handle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
@@ -62,8 +60,23 @@ const SelectRestaurant = {
     const shipping = request.intent.slots.shippingType.value;
     const restaurant = request.intent.slots.restaurantList.value;
     return handlerInput.responseBuilder
-      .speak(`Order Summary: pizza ${food}, delivery method: ${shipping}, restaurant: ${restaurant}`)
-      .getResponse();
+        .speak(`Order Summary: pizza ${food}, delivery method: ${shipping}, restaurant: ${restaurant}`)
+        .addDelegateDirective()
+        .getResponse();
+  },
+};
+
+const Payment = {
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'IntentRequest' &&
+        request.intent.name === 'orderDialog' &&
+        handlerInput.requestEnvelope.request.dialogState === 'COMPLETED'
+  },
+  handle(handlerInput) {
+    return handlerInput.responseBuilder
+        .speak('The order is placed, the delivery will be in 30 minutes')
+        .getResponse();
   },
 };
 
@@ -71,13 +84,13 @@ const HelpHandler = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
     return request.type === 'IntentRequest'
-      && request.intent.name === 'AMAZON.HelpIntent';
+        && request.intent.name === 'AMAZON.HelpIntent';
   },
   handle(handlerInput) {
     return handlerInput.responseBuilder
-      .speak(HELP_MESSAGE)
-      .reprompt(HELP_REPROMPT)
-      .getResponse();
+        .speak(HELP_MESSAGE)
+        .reprompt(HELP_REPROMPT)
+        .getResponse();
   },
 };
 
@@ -85,13 +98,13 @@ const ExitHandler = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
     return request.type === 'IntentRequest'
-      && (request.intent.name === 'AMAZON.CancelIntent'
-        || request.intent.name === 'AMAZON.StopIntent');
+        && (request.intent.name === 'AMAZON.CancelIntent'
+            || request.intent.name === 'AMAZON.StopIntent');
   },
   handle(handlerInput) {
     return handlerInput.responseBuilder
-      .speak(STOP_MESSAGE)
-      .getResponse();
+        .speak(STOP_MESSAGE)
+        .getResponse();
   },
 };
 
@@ -115,9 +128,9 @@ const ErrorHandler = {
     console.log(`Error handled: ${error.message}`);
 
     return handlerInput.responseBuilder
-      .speak('Sorry, an error occurred.')
-      .reprompt('Sorry, an error occurred.')
-      .getResponse();
+        .speak('Sorry, an error occurred.')
+        .reprompt('Sorry, an error occurred.')
+        .getResponse();
   },
 };
 
@@ -129,14 +142,15 @@ const STOP_MESSAGE = 'Goodbye!';
 const skillBuilder = Alexa.SkillBuilders.standard();
 
 exports.handler = skillBuilder
-  .addRequestHandlers(
-    StartMessage,
-    StartOrder,
-    ShippingMethod,
-    SelectRestaurant,
-    HelpHandler,
-    ExitHandler,
-    SessionEndedRequestHandler
-  )
-  .addErrorHandlers(ErrorHandler)
-  .lambda();
+    .addRequestHandlers(
+        StartMessage,
+        StartOrder,
+        ShippingMethod,
+        SelectRestaurant,
+        Payment,
+        HelpHandler,
+        ExitHandler,
+        SessionEndedRequestHandler
+    )
+    .addErrorHandlers(ErrorHandler)
+    .lambda();

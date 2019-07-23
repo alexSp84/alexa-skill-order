@@ -5,7 +5,11 @@
             "intents": [
                 {
                     "name": "AMAZON.CancelIntent",
-                    "samples": []
+                    "samples": [
+                        "forget it",
+                        "cancel",
+                        "never mind"
+                    ]
                 },
                 {
                     "name": "AMAZON.HelpIntent",
@@ -15,7 +19,10 @@
                 },
                 {
                     "name": "AMAZON.StopIntent",
-                    "samples": []
+                    "samples": [
+                        "Close pizza search",
+                        "Close"
+                    ]
                 },
                 {
                     "name": "AMAZON.NavigateHomeIntent",
@@ -28,7 +35,8 @@
                             "name": "foodType",
                             "type": "pizza",
                             "samples": [
-                                "I want to order a pizza {foodType}"
+                                "I want to order a pizza {foodType}",
+                                "pizza {foodType}"
                             ]
                         },
                         {
@@ -46,6 +54,13 @@
                                 "I select {restaurantList}",
                                 "{restaurantList}"
                             ]
+                        },
+                        {
+                            "name": "payment",
+                            "type": "yesOrNo",
+                            "samples": [
+                                "{payment}"
+                            ]
                         }
                     ],
                     "samples": [
@@ -54,7 +69,8 @@
                         "I want to {shippingType}",
                         "{shippingType}",
                         "I select {restaurantList}",
-                        "{restaurantList}"
+                        "{restaurantList}",
+                        "{payment}"
                     ]
                 }
             ],
@@ -108,6 +124,21 @@
                             }
                         }
                     ]
+                },
+                {
+                    "name": "yesOrNo",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "no"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "yes"
+                            }
+                        }
+                    ]
                 }
             ]
         },
@@ -129,7 +160,7 @@
                             "validations": [
                                 {
                                     "type": "hasEntityResolutionMatch",
-                                    "prompt": "Slot.Validation.570385214773.1394429166859.1161009388596"
+                                    "prompt": "Slot.Validation.963624657785.487692102016.1164116251620"
                                 }
                             ]
                         },
@@ -155,12 +186,33 @@
                             "elicitationRequired": true,
                             "prompts": {
                                 "elicitation": "Elicit.Slot.1042996074955.1235172404897"
-                            }
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.1279205376000.160756864340.1047278722342"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "payment",
+                            "type": "yesOrNo",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.79097452972.916364348290"
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.1279205376000.1153749580867.1444090041925"
+                                }
+                            ]
                         }
                     ]
                 }
             ],
-            "delegationStrategy": "SKILL_RESPONSE"
+            "delegationStrategy": "ALWAYS"
         },
         "prompts": [
             {
@@ -173,20 +225,11 @@
                 ]
             },
             {
-                "id": "Slot.Validation.570385214773.1394429166859.1161009388596",
-                "variations": [
-                    {
-                        "type": "PlainText",
-                        "value": "pizza"
-                    }
-                ]
-            },
-            {
                 "id": "Slot.Validation.843796751958.121061225482.1461634208902",
                 "variations": [
                     {
                         "type": "PlainText",
-                        "value": "shipping"
+                        "value": "Specify delivery or go there"
                     }
                 ]
             },
@@ -195,7 +238,7 @@
                 "variations": [
                     {
                         "type": "PlainText",
-                        "value": "Do you want go there or delivery?"
+                        "value": "Nearby to you there 10 places, do you want go there or delivery?"
                     }
                 ]
             },
@@ -205,6 +248,42 @@
                     {
                         "type": "PlainText",
                         "value": "Select the restaurant"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.79097452972.916364348290",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "You want to pay?"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.1279205376000.1153749580867.1444090041925",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "You want to pay? Please answer yes or no"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.1279205376000.160756864340.1047278722342",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Provide a restaurant among those proposed"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.963624657785.487692102016.1164116251620",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "This pizza is not available, which do you want to order alternatively?"
                     }
                 ]
             }
